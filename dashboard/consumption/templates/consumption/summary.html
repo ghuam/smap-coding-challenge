@@ -1,7 +1,55 @@
 {% extends 'consumption/layout.html' %}
 
 {% block content %}
+<script type="text/javascript">
+    window.onload = function () {
+        var chart = new CanvasJS.Chart("chartContainer", {
+            title: {
+                text: "{{ chart_title|title }}"
+            },
+            data: [ {
+                type: "line",
+                axisY: {
+                    title: "Units"
+                },
+                axisX: {
+                    title: "User ID"
+                },
+                dataPoints: [
+                    {% for point in data_points|dictsort:"id" %}
+                    { x: {{ point.id }}, y: {{ point.total_consumption }} },
+                    {% endfor %}
+                ]
+            }]
+        });
 
-<h1>{{message}}</h1>
-
+        chart.render();
+    }
+</script>
+<div id="chartContainer" style="height: 300px; width: 100%;">
+</div>
+<h4>Total Consumption by User</h4>
+<table border="1">
+    <th>id</th>
+    <th>total consumption</th>
+    {% for point in data_points|dictsort:"id" %}
+    <tr>
+        <td>{{point.id}}</td>
+        <td>{{point.total_consumption}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<h4>Users</h4>
+<table border="1">
+    {% for name in column_names %}
+    <th>{{ name }}</th>
+    {% endfor %}
+    {% for record in user_data|dictsort:"id" %}
+    <tr>
+        <td>{{record.id}}</td>
+        <td>{{record.area }}</td>
+        <td>{{record.tariff}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
